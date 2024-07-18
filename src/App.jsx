@@ -7,6 +7,7 @@ import NavBar from "./components/NavBar";
 import "../node_modules/leaflet/dist/leaflet.css";
 import { useState } from "react";
 import MapChart from "./components/MapChart";
+import DataShowcase from "./components/DataShowcase";
 
 function App() {
   const [country, setCountry] = useState("global");
@@ -32,8 +33,8 @@ function App() {
 
   return (
     <>
-      <NavBar />
-     
+      <NavBar onCountryChange={handleCountryChange} />
+      {/* <DataShowcase country={country} /> */}
 
       <Routes>
         <Route path="/" element={<Home />} />

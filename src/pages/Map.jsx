@@ -175,7 +175,8 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { CircleMarker, MapContainer, Popup, TileLayer } from "react-leaflet";
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, TextField, Typography } from "@mui/material";
+import { Bar } from "react-chartjs-2";
 
 const Map = () => {
   const [location, setLocation] = useState([20.5937, 78.9629]);
@@ -244,7 +245,95 @@ const Map = () => {
 
   useEffect(() => {
     fetchData3();
-  }, [selcountries]);
+  }, [selcountries, date]);
+
+  // const labels = selectprovince.map((label) => console.log(label.region.province , label.active));
+  const labels = [];
+  const activeDataSet = [];
+  const confirmedDataSet = [];
+
+  selectprovince.forEach((label) => {
+    if (label.region && label.region.province) {
+      labels.push(label.region.province);
+    } else {
+      labels.push("Blank");
+      console.warn("Missing region or province in label:", label);
+    }
+
+    if (label.active) {
+      activeDataSet.push(label.active);
+    } else {
+      activeDataSet.push(null); // or 0, or any default value
+      console.warn("Missing active cases in label:", label);
+    }
+    if (label.confirmed) {
+      confirmedDataSet.push(label.confirmed);
+    } else {
+      confirmedDataSet.push(null); // or 0, or any default value
+      console.warn("Missing active cases in label:", label);
+    }
+  });
+
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "State wise Active Cases",
+        data: activeDataSet,
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.5)",
+          "rgba(255, 159, 64, 0.5)",
+          "rgba(255, 205, 86, 0.5)",
+          "rgba(75, 192, 192, 0.5)",
+          "rgba(54, 162, 235, 0.5)",
+          "rgba(153, 102, 255, 0.5)",
+          "rgba(201, 203, 207, 0.5)",
+        ],
+        borderColor: [
+          "rgb(255, 99, 132)",
+          "rgb(255, 159, 64)",
+          "rgb(255, 205, 86)",
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+          "rgb(201, 203, 207)",
+        ],
+        borderWidth: 1,
+      },
+      {
+        label: "State wise Confirmed Cases",
+        data: confirmedDataSet,
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.9)",
+          "rgba(255, 159, 64, 0.9)",
+          "rgba(255, 205, 86, 0.9)",
+          "rgba(75, 192, 192, 0.9)",
+          "rgba(54, 162, 235, 0.9)",
+          "rgba(153, 102, 255, 0.9)",
+          "rgba(201, 203, 207, 0.9)",
+        ].reverse(),
+        borderColor: [
+          "rgb(255, 99, 132)",
+          "rgb(255, 159, 64)",
+          "rgb(255, 205, 86)",
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+          "rgb(201, 203, 207)",
+        ].reverse(),
+        borderWidth: 0.8,
+      },
+    ],
+  };
+
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+  console.log(activeDataSet);
 
   const filteredProvinces = useMemo(
     () => province.filter((prov) => prov.province !== null),
@@ -384,6 +473,17 @@ const Map = () => {
         <h4>active_diff: {totalResByCountry.active_diff}</h4>
         <h4>fatality_rate: {totalResByCountry.fatality_rate}</h4>
       </div>
+
+      <div>
+        <Bar options={options} data={data} />
+      </div>
+      <>
+        <TextField
+          required
+          id="outlined-required"
+          defaultValue="Search Country"
+        />
+      </>
     </>
   );
 };
