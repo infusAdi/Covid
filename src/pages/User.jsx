@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
+import MapTable from "../components/MapTable";
 
 const User = () => {
   const [totalResByCountry, setTotalResByCountry] = useState([]);
@@ -80,6 +81,10 @@ const User = () => {
         <h4>active_diff: {totalResByCountry.active_diff}</h4>
         <h4>fatality_rate: {totalResByCountry.fatality_rate}</h4>
       </div>
+
+      <>
+      {/* <MapTable/> */}
+      </>
     </>
   );
 };
